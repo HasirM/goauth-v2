@@ -75,14 +75,14 @@ func Login(c *fiber.Ctx) error {
 	cookie := fiber.Cookie{
 		Name:     "jwt",
 		Value:    token,
-		Expires:  time.Now().Add(time.Hour * 24),
+		Expires:  time.Now().Add(time.Hour * 24), //24 hours
 		HTTPOnly: true,
 	}
 
 	c.Cookie(&cookie)
 
 	return c.JSON(fiber.Map{
-		"message": "Success",
+		"message": "Successfully Logged In",
 	})
 
 }
@@ -97,7 +97,7 @@ func User(c *fiber.Ctx) error {
 	if err != nil {
 		c.Status(fiber.StatusUnauthorized)
 		return c.JSON(fiber.Map{
-			"message": "Unauthenticated",
+			"message": "Unauthenticated, This user doesn't have access to this site",
 		})
 	}
 
@@ -121,6 +121,6 @@ func Logout(c *fiber.Ctx) error {
 	c.Cookie(&cookie)
 
 	return c.JSON(fiber.Map{
-		"message": "success",
+		"message": "Successfully Logged out",
 	})
 }
