@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/hasirm/goauth/database"
@@ -18,5 +20,7 @@ func main() {
 
 	routes.Setup(app)
 
-	app.Listen(":8000")
+	// app.Listen(":8000")
+	http.ListenAndServe(":8000", nil)
+
 }

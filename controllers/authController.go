@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"html/template"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -60,7 +62,7 @@ func Login(c *fiber.Ctx) error {
 
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		Issuer:    strconv.Itoa(int(user.Id)),
-		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(), //24 hours
+		ExpiresAt: time.Now().Add(time.Hour * 10).Unix(), //10 hour
 	})
 
 	token, err := claims.SignedString([]byte(secretKey))
@@ -75,7 +77,7 @@ func Login(c *fiber.Ctx) error {
 	cookie := fiber.Cookie{
 		Name:     "jwt",
 		Value:    token,
-		Expires:  time.Now().Add(time.Hour * 24), //24 hours
+		Expires:  time.Now().Add(time.Hour * 10), //10 hour
 		HTTPOnly: true,
 	}
 
@@ -123,4 +125,41 @@ func Logout(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"message": "Successfully Logged out",
 	})
+}
+
+var tmpl *template.Template
+
+func init() {
+	tmpl = template.Must(template.ParseGlob("templates/*.html"))
+}
+
+func HomeHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl.ExecuteTemplate(w, "register.html", nil)
+}
+
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl.ExecuteTemplate(w, "login.html", nil)
+}
+
+func ResetHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl.ExecuteTemplate(w, "resetpass.html", nil)
+}
+
+func Processor(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	Email := r.FormValue("email")
+	Username := r.FormValue("username")
+	Passsword := r.FormValue("passsword")
+
+	details := models.ContactDetails{
+		Email:     Email,
+		Username:  Username,
+		Passsword: Passsword,
+	}
+
+	tmpl.ExecuteTemplate(w, "process.html", details)
 }

@@ -6,3 +6,9 @@ type User struct {
 	Email    string `json:"email" gorm:"unique"`
 	Password []byte `json:"-"`
 }
+
+type ContactDetails struct {
+	Email     string
+	Username  string
+	Passsword string
+}
